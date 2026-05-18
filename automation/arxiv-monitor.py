@@ -28,11 +28,11 @@ from templates import (
     email_daily_full,
 )
 
-ARXIV_API = "http://export.arxiv.org/api/query"
+ARXIV_API = "https://export.arxiv.org/api/query"
 
-# 产品导向的关键词（可根据兴趣调整）
+# 产品导向的关键词（本地过滤，不在 API 查询中使用，避免触发限流）
 KEYWORDS = [
-    "agent", "rag", "retrieval augmented", "llm agent",
+    "agent", "rag", "retrieval augmented", "llm",
     "tool use", "function calling", "code generation",
     "multimodal", "vision language", "text to image",
     "fine tuning", "lora", "alignment", "rlhf",
@@ -47,12 +47,11 @@ INBOX = PROJECT_ROOT / "papers" / "inbox"
 DIGESTS = PROJECT_ROOT / "papers" / "digests"
 
 
-def build_query(keywords: list[str], days_back: int = 3, max_results: int = 50) -> str:
-    """构造 arXiv API 查询"""
+def build_query(days_back: int = 3, max_results: int = 100) -> str:
+    """构造 arXiv API 查询（仅按分类，不做关键词过滤，避免触发限流）"""
     cat = "cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.HC"
-    kw_parts = "+OR+".join(f'all:{urllib.parse.quote(k)}' for k in keywords)
     return (
-        f"{ARXIV_API}?search_query=({cat})+AND+({kw_parts})"
+        f"{ARXIV_API}?search_query={cat}"
         f"&start=0&max_results={max_results}"
         f"&sortBy=submittedDate&sortOrder=descending"
     )
@@ -88,15 +87,22 @@ def parse_arxiv_response(xml_text: str) -> list[dict]:
 
 
 def is_product_relevant(paper: dict) -> bool:
-    """快速判断论文是否有产品价值（启发式）"""
+    """本地过滤：关键词 + 产品信号双重判断"""
     text = (paper["title"] + " " + paper["summary"]).lower()
-    signals = [
+
+    # 1. 匹配关键词
+    keyword_hit = any(k in text for k in KEYWORDS)
+
+    # 2. 匹配产品信号
+    product_signals = [
         "code", "github", "open source", "release", "demo",
         "outperform", "state of the art", "benchmark",
         "product", "application", "deploy", "user study",
         "real world", "practical", "scale", "production",
     ]
-    return any(s in text for s in signals)
+    signal_hit = any(s in text for s in product_signals)
+
+    return keyword_hit or signal_hit
 
 
 def save_to_inbox(paper: dict):
@@ -124,12 +130,12 @@ def save_to_inbox(paper: dict):
     return filepath
 
 
-def fetch_with_retry(url: str, max_retries: int = 3) -> str:
-    """带指数退避的 API 请求"""
+def fetch_with_retry(url: str, max_retries: int = 3, timeout: int = 45) -> str:
+    """带指数退避的 API 请求（长超时，应对 arXiv 慢响应）"""
     for attempt in range(max_retries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "Paper2Product/1.0"})
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
                 return resp.read().decode("utf-8")
         except urllib.error.HTTPError as e:
             if e.code == 429 and attempt < max_retries - 1:
@@ -144,7 +150,7 @@ def fetch_with_retry(url: str, max_retries: int = 3) -> str:
 def main():
     parser = argparse.ArgumentParser(description="arXiv 论文监控")
     parser.add_argument("--days", type=int, default=3, help="回溯天数 (默认 3)")
-    parser.add_argument("--max", type=int, default=50, help="最大结果数 (默认 50)")
+    parser.add_argument("--max", type=int, default=100, help="最大结果数 (默认 100)")
     parser.add_argument("--dry-run", action="store_true", help="只显示不保存")
     parser.add_argument(
         "--output", choices=["wechat", "text", "email"],
@@ -159,7 +165,7 @@ def main():
 
     # ─── 1. 获取论文 ───
     print(f"🔍 搜索最近 {args.days} 天的论文...", file=sys.stderr)
-    url = build_query(KEYWORDS, args.days, args.max)
+    url = build_query(args.days, args.max)
 
     try:
         xml_text = fetch_with_retry(url)
