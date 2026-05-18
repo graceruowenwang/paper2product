@@ -131,7 +131,7 @@ def main():
 
     # ─── 发送或保存 ───
     today = datetime.now(timezone(timedelta(hours=8))).strftime("%m/%d")
-    subject = f"arXiv 每日简报 — {today}"
+    subject = f"Product Lens 双周洞察 — {today}"
 
     if args.dry_run:
         out_path = Path("/tmp/arxiv-email-preview.html")

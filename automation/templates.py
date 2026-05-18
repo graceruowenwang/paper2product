@@ -141,9 +141,9 @@ def wechat_daily_header(paper_count: int, relevant_count: int) -> str:
     weekday = WEEKDAYS[today.weekday()]
 
     return f"""\
-**arXiv Daily**  周{weekday} · {date_str}
+**Product Lens**  周{weekday} · {date_str}
 
-{paper_count} 篇论文 · {relevant_count} 篇与你相关
+AI PM 研究洞察 · {paper_count} 篇论文
 {DIV}"""
 
 
@@ -151,7 +151,8 @@ def wechat_daily_footer(saved_count: int) -> str:
     """WeChat 简报尾部"""
     return f"""\
 {DIV}
-📁 {saved_count} 篇已存 inbox  ·  Obsidian 即看"""
+Product Lens · 双周 AI PM 洞察
+订阅: https://forms.gle/productlens"""
 
 
 def wechat_daily_empty() -> str:
@@ -159,10 +160,10 @@ def wechat_daily_empty() -> str:
     today = datetime.now(timezone(timedelta(hours=8)))
     date_str = f"{today.month}/{today.day}"
     return f"""\
-**arXiv Daily**  {date_str}
+**Product Lens**  {date_str}
 
 今天没有符合关键词的新论文
-存量阅读日 📖"""
+存量阅读日，适合补往期框架"""
 
 
 def wechat_daily_full(
@@ -343,6 +344,31 @@ body {
 /* remove old cn-summary */
 .cn-summary { display: none; }
 
+/* newsletter sections */
+.newsletter-section {
+    padding: 0 28px 20px 28px;
+}
+.section-header {
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e5e7eb;
+}
+.section-body {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.7;
+}
+.section-body ul {
+    padding-left: 20px;
+    margin: 0;
+}
+.section-body li {
+    margin-bottom: 6px;
+}
+
 /* footer */
 .footer {
     padding: 20px 28px;
@@ -479,15 +505,15 @@ def email_daily_full(
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>arXiv Daily — {date_str}</title>
+<title>Product Lens — {date_str}</title>
 <style>{EMAIL_CSS}</style>
 </head>
 <body>
 <div class="wrapper">
   <div class="card">
     <div class="header">
-      <div class="brand">arXiv Daily</div>
-      <div class="date">{date_str}</div>
+      <div class="brand">Product Lens</div>
+      <div class="date">{date_str} · AI PM 研究洞察</div>
     </div>
     <div class="stats-row">
       <div class="stat-box">
@@ -500,11 +526,26 @@ def email_daily_full(
       </div>
     </div>
     <div class="paper-list">{paper_html}</div>
+    <div class="newsletter-section">
+      <div class="section-header">IS 研究视角 · 框架解读</div>
+      <div class="section-body">
+        <p><em>[本期深度框架将在此展开：输入-处理-输出-治理模型，结合精选论文的 PM 落地分析]</em></p>
+      </div>
+    </div>
+    <div class="newsletter-section">
+      <div class="section-header">对 AI PM 意味着什么</div>
+      <div class="section-body">
+        <ul>
+          <li><em>[关键 takeaway 1]</em></li>
+          <li><em>[关键 takeaway 2]</em></li>
+          <li><em>[关键 takeaway 3]</em></li>
+        </ul>
+      </div>
+    </div>
     <div class="footer">
-      Paper2Product · 每日自动生成<br>
-      <a href="https://github.com/graceruowenwang/paper2product">
-        github.com/graceruowenwang/paper2product
-      </a>
+      <strong>Product Lens</strong> · 双周 AI PM 研究洞察<br>
+      订阅/退订: <a href="https://forms.gle/productlens">forms.gle/productlens</a><br>
+      <a href="https://github.com/graceruowenwang/paper2product">github.com/graceruowenwang/paper2product</a>
     </div>
   </div>
 </div>
