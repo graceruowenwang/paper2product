@@ -1,0 +1,562 @@
+You're trying to keep up with
+state-of-the-art AI research, but every
+time you open a paper, it always gets
+overwhelming with all these equations
+and fancy symbols that can make it hard
+to remember what matters. And while
+you're stuck trying to understand the
+details, other developers are using
+state-of-the-art AI research to
+implement more accurate LLMs and their
+apps to sound smarter at work and stay
+ahead of the curve. And in this video,
+I'll give you the simple framework that
+I used in my computer science degree to
+be able to quickly read and understand
+these dense technical AI research
+papers. That way, you can follow the
+latest breakthroughs in AI, use the best
+models for your own projects, and stop
+feeling behind every time a new LLM
+drops. Hundreds of these AI research
+papers get published every day. So your
+goal should be to get the big picture as
+quick as possible and then quickly
+understand how you can apply it to your
+own projects. There are five key parts
+of any research paper that I look for in
+order for me to distill its essence and
+to understand the important parts within
+a couple of minutes. The first part is
+the title. The title includes the main
+key words of the paper and it'll be very
+clear when I show you the examples later
+in this video. But there's also the
+authors. And the authors are important
+not to know what school they came from,
+but specifically I look at what
+department they research in. That way I
+get an idea of the scholarly background
+behind the authors of this paper. And
+that gives me context into how they're
+thinking about things as I read the rest
+of the paper. Then after the title and
+the authors, the third part I look for
+in a research paper is the abstract. And
+this is arguably the most important part
+of the paper. A well-written abstract is
+essentially a one paragraph summary of
+the entire research paper and its goal
+is to tell you the purpose of the
+research as well as the methods that it
+used in its experiments and the key
+findings. That way you can treat the
+abstract as your kind of north star so
+that you never get lost in any of the
+technical details later on in the paper.
+You can always refer back to the
+abstract to make sure you keep your
+highle understanding of the paper. Then
+after reading the abstract and deciding
+whether or not I want to continue
+reading the paper, I'll actually try to
+scroll to the very end of the paper and
+look for the conclusion. The conclusion
+is similar to the abstract in that it's
+essentially a one paragraph summary of
+the main points of the paper, but it
+also includes the author's
+interpretation of the results and the
+implications of the work. So that the
+conclusion essentially tells you what's
+important about the paper and what your
+main takeaways should be. Then after I'm
+done reading the conclusion and I got a
+really good idea of what the paper is,
+I'll then try and scroll back to the
+front of the paper. But in doing so,
+I'll look for any pictures such as
+charts and as well as architecture
+diagrams. For AI research specifically,
+these two are the most important types
+of pictures and that the experiment
+charts show you model performance and
+the system architecture actually shows
+you how they built the model. And this
+is because our brains process images
+about 60,000 times faster than text. And
+the media also, if they try to cover
+this paper, they're going to be focusing
+on these images. So, the authors of the
+paper, if they think it's a really good
+paper, they're going to try to put as
+much effort they can as they can into
+these diagrams to make sure they're
+readable to anyone or the intended
+audience as well as that they're
+explainable and they describe the key
+concepts of the paper. And that's pretty
+much my framework. And these are the
+five parts of a research paper that I
+look for in order to decide whether or
+not I want to read further into the
+introduction or the experimental results
+of the rest of the paper. Since a lot of
+these papers do contain a lot of
+equations and technical detail, you're
+not going to remember all the details.
+And that's perfectly okay as long as you
+as an engineer or developer or computer
+science student remember the main ideas
+and the takeaways which you got from
+reading the abstract and from reading
+the conclusion. And after the abstract
+and the conclusion, which are only
+usually two paragraphs, I'm pretty much
+able to get the essence of a research
+paper within maybe a couple minutes of
+me reading. That's even before I throw
+it into chat GPT for further analysis.
+So to recap, first I look at the title,
+read any key words to get an idea of
+what the paper's about. I look at some
+of the authors and their background,
+what labs they're from, and what
+departments they research in, and what
+fields they're from. Then I read the
+abstract to find the purpose, methods,
+and key findings. Scroll to the bottom
+to find the conclusion to read the main
+points, as well as the author's
+interpretations of the results and the
+implications of the paper. Then I scroll
+back to the front of the paper. But in
+doing so, I also look at different
+pictures of the paper to reinforce the
+key concepts. Now that you know my
+framework for quickly reading and
+understanding AI research papers, let's
+actually apply it to three different
+papers. And let me show you some
+examples of how I go through each of the
+five steps. First thing I noticed too,
+you have to see that this paper is quite
+long. Uh that's likely because it's more
+of a psychology paper. So the 200 pages
+is no joke. That's like the size of a
+small book. So, you cannot approach
+reading this paper like I did as a
+freshman in cover to cover. You cannot
+read this like a Stephen King novel.
+You're not going to remember all the
+details and you're just going to get
+lost and it's going to take you forever.
+So, let's go through the five main steps
+of the framework that I showed you
+earlier. So, your brain on chat GPT
+accumulation of cognitive debt when
+using AI system for essay writing task.
+So immediately I want to know what the
+writing task they were using because
+whether it's like a creative essay or
+maybe an essay based on historical facts
+it could be different things. Second
+step I look at the authors you know MIT
+Media Lab MIT Wesley College MIT College
+of Art and Design MIT Media. So to me it
+seems like the researchers are very uh
+skilled in graphic design. there likely
+some psychology as well that is involved
+with it. So we're going to see a lot of
+really good graphics which is partly the
+reason why I think a lot of media
+covered this. So first figure the
+dynamic transfer function EEG analysis
+of band to show significance moderately
+to high significance. Okay, this is a
+cool picture of some of the neuroscience
+here and some of the p values. Uh if you
+don't know what p value means it
+basically stands for statistically
+significant. So the the the lower the p
+value the more significant. But here the
+scale is like in the opposite. So this
+is the first figure I have. And now we
+have the abstract. Step three. This is
+quite a long abstract. Usually the
+abstract is probably just like the size
+of this paragraph or maybe like half the
+size of this. So I'm not going to read
+through all this, but I'll just quickly
+skim it. LLM Chat GPT OpenAI humans and
+businesses engage in LLMs on a daily
+basis. It carries its own set of
+advantages and limitations. Cognitive
+cost of using an LLM in the educational
+context of writing an essay. LLM group
+search engine brain only group where
+each participant used the tool to write
+an essay. Conducted three sections asked
+participants to use no tools and brain
+only. We recruited 54 participants so
+they have a decent sample size. We used
+the EEG to record brain activity,
+cognitive uh engagement. We performed
+NLP, interviewed participants, named
+entity recognition, search engine brain
+groups had significantly different
+neural connectivity patterns resulting
+in divergent connective strategy. Brain
+connective connectivity systematically
+scaled down with the amount of external
+support. That's a big finding they had.
+uh search engine show immediate list of
+the weakest coupling weaker neural. So
+this is basically saying that like the
+people who used the search engine and
+the people who use the LLMs have weaker
+brain connections
+and here they talk about the specific
+types. The educational impact begins the
+general public in the study pressing
+matter decrease in learning skills. The
+use of an LLM has measurable impacts.
+The benefits are apparent. We
+demonstrated over the course of a
+four-month study, the LLM groups
+participants scored worse in neural
+linguistic and scoring as a preliminary
+guide for understanding impacts. Okay, I
+guess what's cool is they show you the
+summary of the results right here.
+And yeah, here, see, it's even telling
+you in this paper, skip to discussion
+and the conclusion. What did I tell you?
+Uh, if you're interested in the details,
+we're not going to read them in this
+video, but I'm going to just jump to the
+conclusion and show you what I mean
+here. So I stand it becomes crucial to
+understand the full spectrum of
+cognitive consequences in educational
+informationational context. While these
+tools offer unprecedented opportunities,
+their potential impact is important.
+Yep. LLMs are going to be important for
+education. The LLM reduced friction
+involved in answering questions. Sure,
+it made it easier. However, it came at a
+cognitive cost, diminishing their
+inclination to evaluate the LLM's
+opinions. So um when the people use LLMs
+they're not as able they're less likely
+to critically evaluate the outputs and
+so concerning evolution of the echo
+chamber algorithmically curated content
+is the priorities of the LLM
+shareholders as well as the accuracy of
+the models only a few participants they
+did not follow thinking regarding
+ethical and the brain only group
+reported higher satisfaction higher
+connectivity so brain only group means
+that they didn't use an LLM or a search
+engine and so their more satisfaction
+they higher brain connectivity as
+measured through the EEG I guess caps
+they used essays written with the help
+of LLMs carried a sign lesser
+significance of value they spent less
+time on writing failed to provide a
+quote from their essays human teachers
+closed the loop we believe longitudinal
+studies are needed okay and that kind of
+gives me an idea of the paper saying
+that chachi makes you dumber is
+obviously a bit of a stretch from this
+paper as I want to know also as I scroll
+back what kinds of essays that they were
+writing. Here are the essay actually
+writing tasks. So uh many people believe
+that loyalty to a nation means
+unconditional support to these people
+withdrawal of support is a betrayal but
+doesn't true loyalty requires okay so
+when they say essay questions I think
+they're talking about very open-ended
+questions.
+Um, I guess they're not even measuring
+the accuracy of the essays. They're just
+talking about how well the person using
+the AI tool remembers from it. And yeah,
+I guess it makes sense. If you're using
+an AI tool, it's you're not going to be
+able to remember as much. But in a lot
+of cases, do you even need to remember
+as much though? But that's kind of a
+separate discussion there. And again,
+that's I could read through more of this
+paper and it's very long, but that's
+kind of how I would use the five-step
+approach that I created to kind of get a
+better understanding of this paper
+rather than, you know, the hype you see
+on Twitter or online. Now, for our
+second example, we're going to go on to
+a bit of a more technical paper that's
+more LLM focused with the Deepseek R1
+paper. I actually covered the main ideas
+of this paper in a separate YouTube
+video on my channel here called Deepseek
+Explained to Your Grandma if you
+actually want to understand some of the
+math and some of the modeling behind
+this. And we're not going to go that
+deep into that in this video, but I just
+wanted to show this in case it'd be
+useful for you. So, let's read this.
+Step one, read the title. Deepsek
+incentivizing reason capability in LLMs
+via reinforcement learning. So, the
+reinforcement learning was a huge part
+of this when it came out six months ago.
+So reinforcement learning is going to
+come up a lot in this paper as well as
+reasoning and LLMs. Authors are just
+deepseek AI. You know, I I could
+probably find the one of the authors if
+I really need to. Step two or step three
+abstract. We introduce our first
+generation reasoning models. Deepseek R1
+zero and Deepseek R1. Zero is a model
+trained on reinforcement learning
+without fine-tuning as a preliminary
+step. demonstrates remarkable reasoning
+capabilities through reinforcement
+learning. Deepseek R10 naturally emerges
+with numerous powerful and intriguing
+reasoning behaviors. However, encounters
+challenges such as poor readability and
+language mixing. To address these issues
+and further enhance reasoning
+performance, we introduced R1 which
+incorporates multi-stage training and
+cold start data achieves performance
+comparable to OpenAI's 01 model to
+support the research we open source. So
+the main what I got from this is their
+previous model DeepSseec R110 had a lot
+of problems with poor readability and
+language mixing and then they made
+DeepSeek R1 which incorporates
+multi-stage training and cold start data
+before the reinforcement learning loop
+to get better performances. And you see
+here everyone was talking about this
+largely because it was beating OpenAI's
+01 model at least in most of these tasks
+it was beating it. Here you can see a
+nice little chart that I think describes
+it. There we read the first three steps.
+Step four, we're going to go on to the
+conclusion and a nice conclusion will
+typically be at the end right here. We
+share a journey enhancing model
+reasoning abilities through
+reinforcement learning. Represents a
+pure reinforcement learning approach
+without relying on cold start data.
+Achieving strong performance. Deepseek
+is more powerful leveraging cold start
+data along iterative fine-tuning. It
+achieves performance comparable to
+opening eyes 01 model. We further
+explored distillation the reasoning
+capability to dense models we use as the
+teacher to generate samples and
+fine-tune the smaller models. The
+results promising. Quen outperforms
+GPT40 and claude site on math benchmarks
+with higher scores. Other dense models
+also achieve impressive results
+significantly outperforming the tune
+models. In the future invests research
+on general capability, language mixing,
+pump engineering, and software
+engineering tests. Okay. So the new
+thing that the conclusion here brought I
+want you to remember is it talks about
+the distillation
+which they don't talk about in the
+abstract and the smaller dense models.
+So they use distillation to basically
+have the larger model be able to make
+training examples to teach the smaller
+model to outperform other models. That's
+kind of the whole point of this. And as
+I scroll up we're going to look for any
+diagrams and charts. might look at
+tables briefly. Don't care about the
+equations. Here's a a figure I guess. So
+asks a question, gives a response. This
+is pretty typical in a lot of LLM
+papers. We'll just show you the question
+response pairs and you know how the
+model answers them differently. You have
+the reinforcement learning uh training
+loops seeing that the I guess average
+length increases as the number of steps
+increases. Here it is. The accuracy
+during training goes up as the number of
+steps increases for the reinforcement
+learning. This is very important because
+this is the whole idea behind machine
+learning. You have model accuracy going
+up uh using reinforcement learning. You
+have a template here which is the
+prompt. It's using system prompts. Cool
+to look at. You have the equation in
+case you want to implement reinforcement
+learning. Don't care about that right
+now. You have distillation,
+post training, and there is a few other
+things as well and the introduction too.
+And that was the deepseek paper within 3
+to four minutes. And now I pretty much
+understand what's going on with this
+paper and why people are talking about
+it. So I'm able to be more informed in
+discussions at work and online. And I
+can go read the rest of this paper in
+depth if I want to. But I'm probably
+just going to move on to the next
+example. Now on to our third example.
+We're going to read the original
+Transformer paper back from 2017. It
+looks like it was updated recently
+because people probably started citing
+it a lot. So, attention is all you need.
+That's not the most descriptive title,
+but if you're in the AI community, you
+know what this paper introduces. Looking
+at the authors, Google Brain. Google
+Brain. This guy, I remember Google
+bought this guy. Google paid this guy
+$2.7 billion to go join back Google,
+which is crazy amounts. If you think
+about the OpenAI researchers being paid
+$100 million to go to meta, this guy got
+paid like $2 billion. So that was crazy.
+So yeah, you have University of Toronto,
+Google Brain, and this guy gmail.com.
+Step three, we're going to read the
+abstract. Okay, the dominant sequence
+transduction models are based on a
+complex or recurrent CNN's that included
+encoder and a decoder. The best
+performing models also connect the
+encoder and decoder through attention
+mechanism. Okay, you have a decoder
+encoder. We propose a new simple network
+architecture, the transformer. It's
+anything but simple based solely on
+attention mechanisms. So the idea of
+attention mechanisms are going to come
+up throughout the paper. uh dispensing
+with recurrence and convolutions
+entirely. Experiments on two machine
+translation tasks show these models to
+be better while being more paralyzable,
+more accurate, I guess, and require less
+time to train. It achieves this score
+existing best results on this task. Our
+model achieves state-of-the-art
+while only using eight GPUs at a
+fraction of the training costs after 3
+and 1/2 days. We show the transformer
+generalizes well to other tasks applying
+it successfully to English const
+constituency parsing both within large
+and limited training data. This was a
+mouthful and this was probably the most
+technical abstract I've seen but this
+paper is super important and the
+foundation of the LLMs are all based on
+this paper. Uh we're going to go to the
+model architecture a little bit later.
+So step four, we're going to go to the
+conclusion.
+In this work, we presented the
+transformer, the first sequence
+transduction model based entirely on
+attention, replacing the recurrent
+layers using commonly an encoder decoder
+architecture with multi-headed self
+attention. For translation task, the
+transformer is trained significantly
+faster on than what was used before. We
+achieve state-of-the-art and outperforms
+ensembles.
+We are excited about the future of
+attention models and plan apply them
+other tasks. We plan to extend
+transformers to investigate local
+mechanisms such as images and audio
+which nowadays LLMs can handle images,
+audio and video. So that all came from
+this paper. Making generation less
+sequential is another goal of ours. And
+we have the GitHub right here for the
+codebase right here, just in case you
+want to check it out. Okay. Now, as I
+scroll back, we're going to start to see
+very famous uh diagrams, specifically
+this one. This is the multi head
+attention. These are the the query key
+value vectors that compose of this. I'm
+not going to talk about them this video,
+but if I wanted to research what multi
+head attention is, I would do that. You
+have the attention equation right here
+which using dotproduct and a bunch of
+cool math. Here is the transformer
+diagram. This is the famous one you see
+in every medium article. You have the
+inputs outputs. You have the encoder on
+the left and the decoder on the right.
+And now that I get these pictures in my
+mind now I have a better idea of what
+this paper entails and I can read it if
+I want to or just go on to another LLM
+paper. So, that's how I break down these
+complicated AI research papers in just a
+couple minutes using my five-step
+framework for reading the title, the
+authors, the abstract, the conclusion,
+and then back to reading the diagrams
+and figures. It's not about reading the
+entire paper from cover to cover. It's
+more about understanding the high-level
+essence so that you as a software
+engineer or computer science student can
+quickly apply it to your own work. And
+this approach has helped me be able to
+stay ahead of cutting edge AI research
+and then also apply it to my own work
+and stand out as a software engineer.
+And ultimately, if you want to level up
+your understanding of AI research and
+build better AI based software, reading
+some of these papers, especially the
+popular ones, are going to give you a
+lot of the background knowledge that'll
+help you research these ideas a lot
+better. so that when you're implementing
+an API, you have a better understanding
+of which models to choose in your LLM
+apps. And if you want to see examples of
+a lot of these LLMs being used in apps,
+check out the rest of my channel where I
+have other videos of me using these LLMs
+in different web apps as well as other
+projects. X
