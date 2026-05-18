@@ -20,6 +20,55 @@ DIV = "──────────────────────"
 THIN = "┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈"
 
 
+# ─── Tag 分类引擎 ─────────────────────────────────────────
+
+# 领域标签：关键词 → 标签名
+TAG_RULES = [
+    # 技术领域
+    (["agent", "multi-agent", "autonomous"], "Agent"),
+    (["rag", "retrieval augmented", "retrieval-augmented"], "RAG"),
+    (["fine tuning", "fine-tuning", "lora", "qlora"], "Fine-tuning"),
+    (["multimodal", "vision language", "text to image", "visual"], "多模态"),
+    (["reasoning", "chain of thought", "chain-of-thought", "planning"], "推理"),
+    (["evaluation", "benchmark"], "评估"),
+    (["safety", "alignment", "rlhf", "guardrail"], "安全"),
+    (["embedding", "vector search", "vector database"], "向量搜索"),
+    (["code generation", "codegen", "code completion"], "代码生成"),
+    (["knowledge graph"], "知识图谱"),
+    (["tool use", "function calling"], "工具调用"),
+    (["human ai interaction", "human-ai", "user study", "UX"], "人机交互"),
+    # 产品视角
+    (["product", "production", "deploy", "real world", "practical",
+      "application", "case study", "in the wild"], "PM视角"),
+]
+
+# 固定标签：论文必须有 3+ 产品信号才打
+PM_SIGNALS = [
+    "open source", "github", "code", "release", "demo",
+    "deploy", "production", "real world", "user study",
+    "practical", "product", "application",
+]
+
+
+def classify_tags(paper: dict) -> list[str]:
+    """根据标题+摘要自动打标签（领域标签 + PM视角）"""
+
+    text = (paper.get("title", "") + " " + paper.get("summary", "")).lower()
+    tags = []
+
+    # 领域标签
+    for keywords, tag in TAG_RULES:
+        if any(k in text for k in keywords):
+            tags.append(tag)
+
+    # PM 视角标签（需要论文有强产品信号）
+    pm_score = sum(1 for s in PM_SIGNALS if s in text)
+    if pm_score >= 3 and "PM视角" not in tags:
+        tags.append("PM视角")
+
+    return tags[:5]  # 最多 5 个标签
+
+
 # ─── WeChat Markdown ──────────────────────────────────────
 
 def paper_card(paper: dict, idx: int) -> str:
@@ -27,25 +76,33 @@ def paper_card(paper: dict, idx: int) -> str:
 
     结构：
       序号 + 标题 (粗体)
-      元信息行 (小字)
-      信号标签行 (蓝底灰字风格)
+      Tags (分类标签)
+      元信息行
+      TL;DR 一句话中文摘要
     """
     title = paper["title"].strip()
     arxiv_id = paper.get("arxiv_id", "")
     authors = ", ".join(paper.get("authors", [])[:2])
     cats = ", ".join(paper.get("categories", [])[:2])
     url = paper.get("url", f"https://arxiv.org/abs/{arxiv_id}")
+    tags = classify_tags(paper)
     signals = _extract_signals(paper)
 
+    tag_line = "  ".join(f"`{t}`" for t in tags) if tags else ""
     meta = f"`{arxiv_id}` · {cats}"
     if not signals:
         signals = "—"
+
+    # 中文摘要（如果有）
+    cn = paper.get("cn_summary", "")
+    cn_line = f"\n    💬 {cn}" if cn else ""
 
     return f"""\
 **{idx}.**  {title}
     {meta}
     {authors}
-    {signals}"""
+    {signals}{cn_line}\
+{chr(10) + '    ' + tag_line if tag_line else ''}"""
 
 
 def _extract_signals(paper: dict) -> str:
@@ -261,6 +318,32 @@ body {
     margin-bottom: 3px;
     font-weight: 500;
 }
+.domain-tag {
+    display: inline-block;
+    font-size: 10px;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-right: 4px;
+    margin-bottom: 3px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+.domain-tag.pm {
+    color: #b45309;
+    background: #fffbeb;
+}
+.cn-summary {
+    font-size: 12px;
+    color: #666;
+    margin-top: 6px;
+    line-height: 1.5;
+    padding: 6px 10px;
+    background: #fafbfc;
+    border-radius: 6px;
+    border-left: 3px solid #e5e7eb;
+}
 
 /* footer */
 .footer {
@@ -315,13 +398,27 @@ def email_paper_card(paper: dict, idx: int) -> str:
     cats = ", ".join(paper.get("categories", [])[:2])
     url = paper.get("url", f"https://arxiv.org/abs/{arxiv_id}")
     signals = _extract_signals(paper)
+    tags = classify_tags(paper)
 
+    # 信号标签
     signal_html = ""
     if signals:
-        tags = [s.replace("▸ ", "") for s in signals.split("  ")]
+        s_tags = [s.replace("▸ ", "") for s in signals.split("  ")]
         signal_html = "".join(
-            f'<span class="signal-tag">{t}</span>' for t in tags if t
+            f'<span class="signal-tag">{t}</span>' for t in s_tags if t
         )
+
+    # 分类标签
+    tag_html = ""
+    if tags:
+        tag_html = '<div style="margin-top:4px">' + "".join(
+            f'<span class="domain-tag{" pm" if t == "PM视角" else ""}">{t}</span>'
+            for t in tags
+        ) + "</div>"
+
+    # 中文摘要
+    cn = paper.get("cn_summary", "")
+    cn_html = f'<div class="cn-summary">💬 {cn}</div>' if cn else ""
 
     return f"""\
 <div class="paper-item">
@@ -332,6 +429,8 @@ def email_paper_card(paper: dict, idx: int) -> str:
         {authors}
     </div>
     {signal_html}
+    {tag_html}
+    {cn_html}
 </div>"""
 
 

@@ -26,6 +26,7 @@ from templates import (
     wechat_daily_full,
     wechat_daily_empty,
     email_daily_full,
+    classify_tags,
 )
 
 ARXIV_API = "https://export.arxiv.org/api/query"
@@ -121,11 +122,17 @@ def save_to_inbox(paper: dict):
 - **作者**: {', '.join(paper['authors'][:3])}
 - **发表**: {paper['published']}
 - **分类**: {', '.join(paper['categories'][:3])}
+- **Tags**: {' '.join(f'#{t}' for t in classify_tags(paper))}
 - **状态**: 待评估
+- **PM视角**: {'✅ 强产品信号' if 'PM视角' in classify_tags(paper) else '—'}
 
 ## 摘要
 
 {paper['summary']}
+
+## 一句话中文摘要
+
+> [待 LLM 填写]
 
 ---
 *自动收录于 {datetime.now().strftime('%Y-%m-%d %H:%M')}*
@@ -162,8 +169,8 @@ def main():
         help="输出格式: wechat (精美通知), text (纯文本), email (HTML 邮件)",
     )
     parser.add_argument(
-        "--min-signals", type=int, default=2,
-        help="最少命中信号数才入库 (默认 2，越大越严格)",
+        "--min-signals", type=int, default=3,
+        help="最少命中信号数 (默认 3，只存精读)",
     )
     parser.add_argument(
         "--max-show", type=int, default=8,
