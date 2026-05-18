@@ -86,12 +86,16 @@ def parse_arxiv_response(xml_text: str) -> list[dict]:
     return papers
 
 
-def is_product_relevant(paper: dict) -> bool:
-    """本地过滤：关键词 + 产品信号双重判断"""
+def is_product_relevant(paper: dict, min_signals: int = 2) -> bool:
+    """本地过滤：关键词 + 产品信号双重判断，需满足最低信号数才入库
+
+    min_signals=2: 需要至少命中 2 个信号（关键词也算 1 个信号），
+    从 27 篇砍到 ~8 篇精读级别
+    """
     text = (paper["title"] + " " + paper["summary"]).lower()
 
     # 1. 匹配关键词
-    keyword_hit = any(k in text for k in KEYWORDS)
+    keyword_hit = 1 if any(k in text for k in KEYWORDS) else 0
 
     # 2. 匹配产品信号
     product_signals = [
@@ -100,9 +104,9 @@ def is_product_relevant(paper: dict) -> bool:
         "product", "application", "deploy", "user study",
         "real world", "practical", "scale", "production",
     ]
-    signal_hit = any(s in text for s in product_signals)
+    signal_count = sum(1 for s in product_signals if s in text)
 
-    return keyword_hit or signal_hit
+    return (keyword_hit + signal_count) >= min_signals
 
 
 def save_to_inbox(paper: dict):
@@ -158,6 +162,10 @@ def main():
         help="输出格式: wechat (精美通知), text (纯文本), email (HTML 邮件)",
     )
     parser.add_argument(
+        "--min-signals", type=int, default=2,
+        help="最少命中信号数才入库 (默认 2，越大越严格)",
+    )
+    parser.add_argument(
         "--max-show", type=int, default=8,
         help="WeChat 消息中最多展示几篇 (默认 8)",
     )
@@ -176,7 +184,7 @@ def main():
     papers = parse_arxiv_response(xml_text)
     print(f"📄 找到 {len(papers)} 篇论文", file=sys.stderr)
 
-    relevant = [p for p in papers if is_product_relevant(p)]
+    relevant = [p for p in papers if is_product_relevant(p, args.min_signals)]
     print(f"🎯 产品相关: {len(relevant)} 篇", file=sys.stderr)
 
     # ─── 2. Dry run ───
