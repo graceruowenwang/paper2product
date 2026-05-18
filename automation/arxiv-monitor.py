@@ -28,6 +28,7 @@ from templates import (
     email_daily_full,
     classify_tags,
 )
+from pm_angle_generator import batch_generate as generate_pm_angles
 
 ARXIV_API = "https://export.arxiv.org/api/query"
 
@@ -124,7 +125,7 @@ def save_to_inbox(paper: dict):
 - **分类**: {', '.join(paper['categories'][:3])}
 - **Tags**: {' '.join(f'#{t}' for t in classify_tags(paper))}
 - **状态**: 待评估
-- **PM视角**: {'✅ 强产品信号' if 'PM视角' in classify_tags(paper) else '—'}
+- **PM视角**: {'✅ 强产品信号' if paper.get('pm_angle') else '—'}
 
 ## 摘要
 
@@ -176,6 +177,10 @@ def main():
         "--max-show", type=int, default=8,
         help="WeChat 消息中最多展示几篇 (默认 8)",
     )
+    parser.add_argument(
+        "--pm-angle", action="store_true",
+        help="调用 LLM 生成产品化角度 (需要 DeepSeek API)",
+    )
     args = parser.parse_args()
 
     # ─── 1. 获取论文 ───
@@ -216,6 +221,25 @@ def main():
         saved += 1
 
     print(f"📥 已保存 {saved} 篇到 papers/inbox/", file=sys.stderr)
+
+    # ─── 4.5. PM 视角生成（可选，调用 DeepSeek API） ───
+    if args.pm_angle and relevant:
+        print(f"🧠 生成 PM 视角...", file=sys.stderr)
+        try:
+            relevant = generate_pm_angles(relevant)
+            # 将 pm_angle 写回已保存的 markdown 文件
+            for p in relevant:
+                angle = p.get("pm_angle", "")
+                if angle:
+                    # 找到对应的 inbox 文件并更新
+                    fn = f"{p['published']}_{p['arxiv_id']}.md"
+                    fp = INBOX / fn
+                    if fp.exists():
+                        content = fp.read_text(encoding="utf-8")
+                        content = content.replace("> [待 LLM 填写]", f"> {angle}")
+                        fp.write_text(content, encoding="utf-8")
+        except Exception as e:
+            print(f"⚠️  PM 视角生成失败: {e}", file=sys.stderr)
 
     # ─── 5. WeChat 模式 (精美通知) ───
     if args.output == "wechat":

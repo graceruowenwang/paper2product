@@ -37,9 +37,6 @@ TAG_RULES = [
     (["knowledge graph"], "知识图谱"),
     (["tool use", "function calling"], "工具调用"),
     (["human ai interaction", "human-ai", "user study", "UX"], "人机交互"),
-    # 产品视角
-    (["product", "production", "deploy", "real world", "practical",
-      "application", "case study", "in the wild"], "PM视角"),
 ]
 
 # 固定标签：论文必须有 3+ 产品信号才打
@@ -60,11 +57,6 @@ def classify_tags(paper: dict) -> list[str]:
     for keywords, tag in TAG_RULES:
         if any(k in text for k in keywords):
             tags.append(tag)
-
-    # PM 视角标签（需要论文有强产品信号）
-    pm_score = sum(1 for s in PM_SIGNALS if s in text)
-    if pm_score >= 3 and "PM视角" not in tags:
-        tags.append("PM视角")
 
     return tags[:5]  # 最多 5 个标签
 
@@ -93,15 +85,17 @@ def paper_card(paper: dict, idx: int) -> str:
     if not signals:
         signals = "—"
 
-    # 中文摘要（如果有）
+    # 中文摘要 / PM 角度（最核心的产品信息）
+    pm_angle = paper.get("pm_angle", "")
     cn = paper.get("cn_summary", "")
-    cn_line = f"\n    💬 {cn}" if cn else ""
+    insight = pm_angle or cn
+    insight_line = f"\n    💡 {insight}" if insight else ""
 
     return f"""\
 **{idx}.**  {title}
     {meta}
     {authors}
-    {signals}{cn_line}\
+    {signals}{insight_line}\
 {chr(10) + '    ' + tag_line if tag_line else ''}"""
 
 
@@ -218,12 +212,12 @@ body {
     color: #1a1a2e;
     -webkit-font-smoothing: antialiased;
 }
-.wrapper { max-width: 520px; margin: 0 auto; padding: 24px 16px; }
+.wrapper { max-width: 620px; margin: 0 auto; padding: 24px 16px; }
 .card {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.05);
     margin-bottom: 20px;
 }
 
@@ -231,31 +225,31 @@ body {
 .header {
     background: #1a1a2e;
     color: #fff;
-    padding: 28px 24px;
+    padding: 32px 28px;
     text-align: center;
 }
 .header .brand {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     letter-spacing: 0.5px;
 }
 .header .date {
     font-size: 13px;
     opacity: 0.65;
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
 /* stats */
 .stats-row {
     display: flex;
-    padding: 20px 24px;
-    gap: 16px;
+    padding: 24px 28px;
+    gap: 20px;
 }
 .stat-box {
     flex: 1;
     background: #f7f7f8;
-    border-radius: 10px;
-    padding: 14px 12px;
+    border-radius: 12px;
+    padding: 18px 16px;
     text-align: center;
 }
 .stat-box .num {
@@ -271,9 +265,9 @@ body {
 }
 
 /* papers */
-.paper-list { padding: 0 24px 16px 24px; }
+.paper-list { padding: 0 28px 20px 28px; }
 .paper-item {
-    padding: 14px 0;
+    padding: 18px 0;
     border-bottom: 1px solid #f0f0f2;
 }
 .paper-item:last-child { border: none; }
@@ -334,23 +328,27 @@ body {
     color: #b45309;
     background: #fffbeb;
 }
-.cn-summary {
-    font-size: 12px;
-    color: #666;
-    margin-top: 6px;
+.pm-insight {
+    font-size: 13px;
+    color: #374151;
+    margin-top: 8px;
     line-height: 1.5;
-    padding: 6px 10px;
-    background: #fafbfc;
-    border-radius: 6px;
-    border-left: 3px solid #e5e7eb;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #fef9e7 0%, #fefce8 100%);
+    border-radius: 8px;
+    border-left: 3px solid #eab308;
+    font-weight: 500;
 }
+
+/* remove old cn-summary */
+.cn-summary { display: none; }
 
 /* footer */
 .footer {
-    padding: 16px 24px;
+    padding: 20px 28px;
     background: #fafafa;
     text-align: center;
-    font-size: 11px;
+    font-size: 12px;
     color: #bbb;
     line-height: 1.6;
 }
@@ -416,9 +414,13 @@ def email_paper_card(paper: dict, idx: int) -> str:
             for t in tags
         ) + "</div>"
 
-    # 中文摘要
+    # 中文摘要 / PM 角度
+    pm_angle = paper.get("pm_angle", "")
     cn = paper.get("cn_summary", "")
-    cn_html = f'<div class="cn-summary">💬 {cn}</div>' if cn else ""
+    insight = pm_angle or cn
+    insight_html = (
+        f'<div class="pm-insight">💡 {insight}</div>' if insight else ""
+    )
 
     return f"""\
 <div class="paper-item">
@@ -430,7 +432,7 @@ def email_paper_card(paper: dict, idx: int) -> str:
     </div>
     {signal_html}
     {tag_html}
-    {cn_html}
+    {insight_html}
 </div>"""
 
 
