@@ -35,9 +35,9 @@ INBOX = PROJECT_ROOT / "papers" / "inbox"
 def build_query(keywords: list[str], days_back: int = 3, max_results: int = 50) -> str:
     """构造 arXiv API 查询"""
     cat = "cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.HC"
-    kw = "+OR+".join(f'all:"{k}"' for k in keywords)
+    kw_parts = "+OR+".join(f'all:{urllib.parse.quote(k)}' for k in keywords)
     return (
-        f"{ARXIV_API}?search_query=({cat})+AND+({kw})"
+        f"{ARXIV_API}?search_query=({cat})+AND+({kw_parts})"
         f"&start=0&max_results={max_results}"
         f"&sortBy=submittedDate&sortOrder=descending"
     )
