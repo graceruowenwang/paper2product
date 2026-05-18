@@ -27,7 +27,9 @@ def send_email(
     username: str,
     password: str,
 ) -> bool:
-    """通过 SMTP 发送 HTML 邮件"""
+    """通过 SMTP 发送 HTML 邮件（支持 SSL 和 STARTTLS）"""
+    import ssl
+
     msg = MIMEMultipart("alternative")
     msg["From"] = smtp_config["sender"]
     msg["To"] = to
@@ -35,8 +37,18 @@ def send_email(
     msg.attach(MIMEText(html_content, "html", "utf-8"))
 
     try:
-        server = smtplib.SMTP(smtp_config["host"], smtp_config["port"], timeout=30)
-        server.starttls()
+        use_ssl = smtp_config.get("use_ssl", False)
+        if use_ssl:
+            ctx = ssl.create_default_context()
+            server = smtplib.SMTP_SSL(
+                smtp_config["host"], smtp_config["port"],
+                timeout=30, context=ctx
+            )
+        else:
+            server = smtplib.SMTP(
+                smtp_config["host"], smtp_config["port"], timeout=30
+            )
+            server.starttls()
         server.login(username, password)
         server.send_message(msg)
         server.quit()

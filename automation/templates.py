@@ -416,8 +416,9 @@ def email_daily_full(
 SMTP_CONFIG = {
     "yeah": {
         "host": "smtp.yeah.net",
-        "port": 587,
-        "sender": "Paper2Product <ruowenwang@yeah.net>",
+        "port": 465,
+        "use_ssl": True,
+        "sender": "Product Lens <ruowenwang@yeah.net>",
     },
     "wukong": {
         "host": "smtp.exmail.qq.com",
