@@ -8,6 +8,8 @@ import argparse
 import json
 import os
 import sys
+import time
+import urllib.error
 import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -109,6 +111,23 @@ def save_to_inbox(paper: dict):
     return filepath
 
 
+def fetch_with_retry(url: str, max_retries: int = 3) -> str:
+    """带指数退避的 API 请求"""
+    for attempt in range(max_retries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Paper2Product/1.0"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return resp.read().decode("utf-8")
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < max_retries - 1:
+                wait = 5 * (2 ** attempt)
+                print(f"  ⏳ 限流，{wait}s 后重试...")
+                time.sleep(wait)
+            else:
+                raise
+    raise RuntimeError("max retries exceeded")
+
+
 def main():
     parser = argparse.ArgumentParser(description="arXiv 论文监控")
     parser.add_argument("--days", type=int, default=3, help="回溯天数")
@@ -118,11 +137,9 @@ def main():
 
     print(f"🔍 搜索最近 {args.days} 天的论文...")
     url = build_query(KEYWORDS, args.days, args.max)
-    
+
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "Paper2Product/1.0"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            xml_text = resp.read().decode("utf-8")
+        xml_text = fetch_with_retry(url)
     except Exception as e:
         print(f"❌ API 请求失败: {e}", file=sys.stderr)
         sys.exit(1)
