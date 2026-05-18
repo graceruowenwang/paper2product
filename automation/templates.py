@@ -422,6 +422,6 @@ SMTP_CONFIG = {
     "wukong": {
         "host": "smtp.exmail.qq.com",
         "port": 587,
-        "sender": "悟空编辑器 <noreply@wukong-editor.com>",
+        "sender": "Product Lens <account@wukong-editor.com>",
     },
 }
