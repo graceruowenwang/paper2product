@@ -2,6 +2,11 @@
 """
 Paper2Product — arXiv 论文监控
 按关键词抓取 cs.AI / cs.CL / cs.HC 的最新论文，写入 papers/inbox/
+
+输出模式：
+  wechat  → 精美的 WeChat Markdown 通知（默认）
+  text    → 原始纯文本（调试用）
+  email   → 保存 HTML 邮件到 papers/digests/
 """
 
 import argparse
@@ -15,6 +20,13 @@ import urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+# 导入模板
+from templates import (
+    wechat_daily_full,
+    wechat_daily_empty,
+    email_daily_full,
+)
 
 ARXIV_API = "http://export.arxiv.org/api/query"
 
@@ -32,6 +44,7 @@ KEYWORDS = [
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 INBOX = PROJECT_ROOT / "papers" / "inbox"
+DIGESTS = PROJECT_ROOT / "papers" / "digests"
 
 
 def build_query(keywords: list[str], days_back: int = 3, max_results: int = 50) -> str:
@@ -121,7 +134,7 @@ def fetch_with_retry(url: str, max_retries: int = 3) -> str:
         except urllib.error.HTTPError as e:
             if e.code == 429 and attempt < max_retries - 1:
                 wait = 5 * (2 ** attempt)
-                print(f"  ⏳ 限流，{wait}s 后重试...")
+                print(f"  ⏳ 限流，{wait}s 后重试...", file=sys.stderr)
                 time.sleep(wait)
             else:
                 raise
@@ -130,12 +143,22 @@ def fetch_with_retry(url: str, max_retries: int = 3) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="arXiv 论文监控")
-    parser.add_argument("--days", type=int, default=3, help="回溯天数")
-    parser.add_argument("--max", type=int, default=50, help="最大结果数")
+    parser.add_argument("--days", type=int, default=3, help="回溯天数 (默认 3)")
+    parser.add_argument("--max", type=int, default=50, help="最大结果数 (默认 50)")
     parser.add_argument("--dry-run", action="store_true", help="只显示不保存")
+    parser.add_argument(
+        "--output", choices=["wechat", "text", "email"],
+        default="wechat",
+        help="输出格式: wechat (精美通知), text (纯文本), email (HTML 邮件)",
+    )
+    parser.add_argument(
+        "--max-show", type=int, default=8,
+        help="WeChat 消息中最多展示几篇 (默认 8)",
+    )
     args = parser.parse_args()
 
-    print(f"🔍 搜索最近 {args.days} 天的论文...")
+    # ─── 1. 获取论文 ───
+    print(f"🔍 搜索最近 {args.days} 天的论文...", file=sys.stderr)
     url = build_query(KEYWORDS, args.days, args.max)
 
     try:
@@ -145,24 +168,62 @@ def main():
         sys.exit(1)
 
     papers = parse_arxiv_response(xml_text)
-    print(f"📄 找到 {len(papers)} 篇论文")
+    print(f"📄 找到 {len(papers)} 篇论文", file=sys.stderr)
 
     relevant = [p for p in papers if is_product_relevant(p)]
-    print(f"🎯 产品相关: {len(relevant)} 篇")
+    print(f"🎯 产品相关: {len(relevant)} 篇", file=sys.stderr)
 
+    # ─── 2. Dry run ───
     if args.dry_run:
         for p in relevant[:10]:
             print(f"  • {p['title'][:80]}...")
         return
 
+    # ─── 3. Text 模式 (原始输出) ───
+    if args.output == "text":
+        for p in relevant:
+            fp = save_to_inbox(p)
+            print(f"  ✅ {fp.name}")
+        print(f"\n📥 已保存 {len(relevant)} 篇到 papers/inbox/")
+        return
+
+    # ─── 4. 保存论文 ───
     saved = 0
     for p in relevant:
         fp = save_to_inbox(p)
-        print(f"  ✅ {fp.name}")
+        print(f"  ✅ {fp.name}", file=sys.stderr)
         saved += 1
 
-    print(f"\n📥 已保存 {saved} 篇到 papers/inbox/")
-    print(f"💡 下一步: 用 paper-summarizer.py 提取关键信息")
+    print(f"📥 已保存 {saved} 篇到 papers/inbox/", file=sys.stderr)
+
+    # ─── 5. WeChat 模式 (精美通知) ───
+    if args.output == "wechat":
+        if not relevant:
+            print(wechat_daily_empty())
+        else:
+            print(wechat_daily_full(
+                papers=relevant,
+                paper_count=len(papers),
+                relevant_count=len(relevant),
+                saved_count=saved,
+                max_show=args.max_show,
+            ))
+        return
+
+    # ─── 6. Email 模式 (HTML 文件) ───
+    if args.output == "email":
+        DIGESTS.mkdir(parents=True, exist_ok=True)
+        today = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
+        html = email_daily_full(
+            papers=relevant,
+            paper_count=len(papers),
+            relevant_count=len(relevant),
+        )
+        email_path = DIGESTS / f"arxiv-digest-{today}.html"
+        email_path.write_text(html, encoding="utf-8")
+        print(f"📧 HTML 邮件已保存: {email_path}")
+        print(email_path)  # 供 cron 脚本抓取路径
+        return
 
 
 if __name__ == "__main__":
